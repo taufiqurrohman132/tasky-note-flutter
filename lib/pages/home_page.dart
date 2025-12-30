@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tasky_note/models/note.dart';
 import 'package:tasky_note/pages/add_note_page.dart';
@@ -16,11 +15,14 @@ class _HomePageState extends State<HomePage> {
 
   int get todayCount {
     final now = DateTime.now();
-    return _notes.where((n) =>
-    n.date.year == now.year &&
-        n.date.month == now.month &&
-        n.date.day == now.day
-    ).length;
+    return _notes
+        .where(
+          (n) =>
+              n.date.year == now.year &&
+              n.date.month == now.month &&
+              n.date.day == now.day,
+        )
+        .length;
   }
 
   int get scheduleCount {
@@ -34,38 +36,48 @@ class _HomePageState extends State<HomePage> {
 
   int get allTaskCount => _notes.length;
 
-
   void _addNote(Note note) {
     setState(() {
       _notes.add(note);
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
+    final horizontalPadding = MediaQuery.of(context).size.width * 0.05;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF6F7FB),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _header(),
-                const SizedBox(height: 20),
-                _overview(),
-                const SizedBox(height: 24),
-                _projectTitle(),
-                const SizedBox(height: 12),
-                _noteList(),
-              ],
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: 1100, // batas lebar desktop
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: horizontalPadding,
+                  vertical: 16,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _header(),
+                    const SizedBox(height: 20),
+                    _overview(),
+                    const SizedBox(height: 24),
+                    _projectTitle(),
+                    const SizedBox(height: 12),
+                    _noteList(),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           final result = await Navigator.push(
             context,
@@ -74,91 +86,176 @@ class _HomePageState extends State<HomePage> {
           if (result is Note) {
             _addNote(result);
           }
-
-
         },
-        child: const Icon(Icons.add),
+        icon: const Icon(Icons.add),
+        label: const Text('New Task'),
       ),
     );
   }
 
+  // headerd
   Widget _header() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            Text(
-              'Welcome',
-              style: TextStyle(color: Colors.grey),
-            ),
-            SizedBox(height: 4),
-            Text(
-              'Andrew Mike',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.notifications_none),
-            ),
-            const CircleAvatar(
-              radius: 18,
-              backgroundImage: AssetImage('assets/avatar.png'),
-            ),
-          ],
-        )
-      ],
-    );
-  }
-  Widget _overview() {
-    return GridView.count(
-      crossAxisCount: 2,
-      crossAxisSpacing: 12,
-      mainAxisSpacing: 12,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      children: [
-        _overviewCard(todayCount.toString(), 'Today', Colors.purple),
-        _overviewCard(scheduleCount.toString(), 'Schedule', Colors.orange),
-        _overviewCard(projectCount.toString(), 'Projects', Colors.blue),
-        _overviewCard(allTaskCount.toString(), 'All Task', Colors.green),
-      ],
-    );
-  }
-
-
-  Widget _overviewCard(String value, String title, Color color) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(16),
+        gradient: const LinearGradient(
+          colors: [Color(0xFF6A5AE0), Color(0xFF8E7BFF)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              Text('Welcome back', style: TextStyle(color: Colors.white70)),
+              SizedBox(height: 4),
+              Text(
+                'Tasky Note',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
-          Text(title),
+          Row(
+            children: [
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.notifications_none, color: Colors.white),
+              ),
+              const CircleAvatar(
+                radius: 18,
+                backgroundImage: AssetImage('assets/avatar.png'),
+              ),
+            ],
+          ),
         ],
       ),
     );
   }
+
+  // card 4
+  Widget _overview() {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final crossAxis = screenWidth > 600 ? 4 : 2;
+    return GridView.builder(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxis,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        mainAxisExtent: 110, // tinggi card FIX & aman di HP
+      ),
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: 4,
+      itemBuilder: (context, index) {
+        final items = [
+          _overviewCard(
+            todayCount.toString(),
+            'Today',
+            Icons.today,
+            Colors.purple,
+          ),
+          _overviewCard(
+            scheduleCount.toString(),
+            'Schedule',
+            Icons.schedule,
+            Colors.orange,
+          ),
+          _overviewCard(
+            projectCount.toString(),
+            'Projects',
+            Icons.work,
+            Colors.blue,
+          ),
+          _overviewCard(
+            allTaskCount.toString(),
+            'All Task',
+            Icons.task,
+            Colors.green,
+          ),
+        ];
+        return items[index];
+      },
+    );
+  }
+
+  Widget _overviewCard(
+      String value,
+      String title,
+      IconData icon,
+      Color color,
+      ) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.15),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          /// ICON
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.15),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: color, size: 22),
+          ),
+
+          const SizedBox(width: 10),
+
+          /// TEXT (WAJIB Expanded)
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  value,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+
   Widget _projectTitle() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -167,20 +264,16 @@ class _HomePageState extends State<HomePage> {
           'Projects',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        Text(
-          'All time',
-          style: TextStyle(color: Colors.grey),
-        ),
+        Chip(label: Text('All time'), backgroundColor: Color(0xFFEDEAFF)),
       ],
     );
   }
+
   Widget _noteList() {
     if (_notes.isEmpty) {
-      return const Center(
-        child: Padding(
-          padding: EdgeInsets.only(top: 40),
-          child: Text('Belum Ada Catatan'),
-        ),
+      return const Padding(
+        padding: EdgeInsets.only(top: 40),
+        child: Center(child: Text('Belum Ada Catatan')),
       );
     }
 
@@ -189,22 +282,27 @@ class _HomePageState extends State<HomePage> {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
-        final note = _notes[index]; // ⬅️ INI ASALNYA
-
-        return NoteItem(
-          note: note,
-          onEdit: () {
-            // buka halaman edit
-          },
-          onDelete: () {
-            setState(() {
-              _notes.remove(note);
-            });
-          },
+        final note = _notes[index];
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Card(
+            elevation: 4,
+            shadowColor: Colors.black12,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: NoteItem(
+              noteData: note,
+              onEdti: () {},
+              onDelte: () {
+                setState(() {
+                  _notes.remove(note);
+                });
+              },
+            ),
+          ),
         );
-
       },
     );
   }
-
 }

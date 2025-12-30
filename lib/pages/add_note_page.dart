@@ -9,195 +9,133 @@ class AddNotePage extends StatefulWidget {
 }
 
 class _AddNotePageState extends State<AddNotePage> {
-  final _titleController = TextEditingController();
-  final _descController = TextEditingController();
-  String _selectedCategory = 'task';
+  final titleCtrl = TextEditingController();
+  final descCtrl = TextEditingController();
 
-  DateTime _selectedDate = DateTime.now();
-  TimeOfDay _startTime = TimeOfDay.now();
-  TimeOfDay _endTime = TimeOfDay.now();
+  DateTime pickedDate = DateTime.now();
+  TimeOfDay startTm = TimeOfDay.now();
+  TimeOfDay endTm = TimeOfDay.now();
 
-  Color _selectedColor = Colors.blue;
-  String _category = 'task';
+  Color pickedClr = Colors.blue;
+  String cat = 'task';
 
-
-
-  Future<void> _pickStartTime() async {
-    final time = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
-    if (time != null) setState(() => _startTime = time);
-  }
-
-  Future<void> _pickEndTime() async {
-    final time = await showTimePicker(
-      context: context,
-      initialTime: _startTime ?? TimeOfDay.now(),
-    );
-    if (time != null) setState(() => _endTime = time);
-  }
-
-  void _saveNote() {
-    if (_titleController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Judul wajib diisi')),
-      );
-      return;
-    }
-
-    Navigator.pop(
-      context,
-      Note(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        title: _titleController.text,
-        description: _descController.text.isEmpty
-            ? null
-            : _descController.text,
-        date: _selectedDate,
-        startTime: _startTime,
-        endTime: _endTime,
-        isDone: false,
-        category: _category,
-        color: _selectedColor,
-      ),
-    );
-  }
-
-  @override
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true,
-      backgroundColor: const Color(0xFFF6F7FB),
+      backgroundColor: const Color(0xfff6f7fb),
       appBar: AppBar(
-        elevation: 0,
         backgroundColor: Colors.transparent,
-        foregroundColor: Colors.black,
+        elevation: 0,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.fromLTRB(18, 16, 18, 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
               'Create New Task',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
             ),
-            const SizedBox(height: 24),
-
-            /// TOPIC
-            const Text('Topic', style: TextStyle(color: Colors.grey)),
-            TextField(
-              controller: _titleController,
-              decoration: const InputDecoration(
-                hintText: 'Write topic',
-                border: UnderlineInputBorder(),
-              ),
-            ),
-
             const SizedBox(height: 20),
 
-            /// DESCRIPTION
-            const Text('Description', style: TextStyle(color: Colors.grey)),
-            TextField(
-              controller: _descController,
-              minLines: 1,
-              maxLines: 3,
-              decoration: const InputDecoration(
-                hintText: 'Write description',
-                border: UnderlineInputBorder(),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            /// DATE
-            const Text('Date', style: TextStyle(color: Colors.grey)),
-            InkWell(
-              onTap: () async {
-                final picked = await showDatePicker(
-                  context: context,
-                  initialDate: _selectedDate,
-                  firstDate: DateTime(2020),
-                  lastDate: DateTime(2100),
-                );
-                if (picked != null) {
-                  setState(() => _selectedDate = picked);
-                }
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: Text(
-                  '${_selectedDate.day} / ${_selectedDate.month} / ${_selectedDate.year}',
-                  style: const TextStyle(fontSize: 16),
+            _box(
+              'Topic',
+              TextField(
+                controller: titleCtrl,
+                decoration: const InputDecoration(
+                  hintText: 'Write topic',
+                  border: InputBorder.none,
                 ),
               ),
             ),
 
-            const SizedBox(height: 20),
-
-            /// TIME
-            const Text('Time', style: TextStyle(color: Colors.grey)),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  child: _timeField(
-                    label: 'Start',
-                    time: _startTime,
-                    onTap: _pickStartTime,
-                  ),
+            _box(
+              'Description',
+              TextField(
+                controller: descCtrl,
+                minLines: 2,
+                maxLines: 4,
+                decoration: const InputDecoration(
+                  hintText: 'Write description',
+                  border: InputBorder.none,
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _timeField(
-                    label: 'End',
-                    time: _endTime,
-                    onTap: _pickEndTime,
-                  ),
+              ),
+            ),
+
+            _box(
+              'Date',
+              InkWell(
+                onTap: () async {
+                  final d = await showDatePicker(
+                    context: context,
+                    initialDate: pickedDate,
+                    firstDate: DateTime(2021),
+                    lastDate: DateTime(2100),
+                  );
+                  if (d != null) {
+                    setState(() => pickedDate = d);
+                  }
+                },
+                child: Row(
+                  children: [
+                    const Icon(Icons.calendar_today, size: 17),
+                    const SizedBox(width: 8),
+                    Text(
+                      '${pickedDate.day}/${pickedDate.month}/${pickedDate.year}',
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
 
-            const SizedBox(height: 20),
-
-            /// COLOR
-            const Text('Choose color', style: TextStyle(color: Colors.grey)),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                _colorDot(Colors.blue),
-                _colorDot(Colors.purple),
-                _colorDot(Colors.orange),
-                _colorDot(Colors.green),
-              ],
+            _box(
+              'Time',
+              Row(
+                children: [
+                  Expanded(child: _timePick('Start', startTm, true)),
+                  const SizedBox(width: 10),
+                  Expanded(child: _timePick('End', endTm, false)),
+                ],
+              ),
             ),
 
-            const SizedBox(height: 24),
-
-            /// CATEGORY
-            const Text('Category', style: TextStyle(color: Colors.grey)),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              children: [
-                _categoryChip('task'),
-                _categoryChip('event'),
-                _categoryChip('reminder'),
-                _categoryChip('project'),
-              ],
+            _box(
+              'Color',
+              Row(
+                children: [
+                  _clrDot(Colors.blue),
+                  _clrDot(Colors.purple),
+                  _clrDot(Colors.orange),
+                  _clrDot(Colors.green),
+                ],
+              ),
             ),
 
-            const SizedBox(height: 32),
+            _box(
+              'Category',
+              Wrap(
+                spacing: 8,
+                children: ['task', 'event', 'reminder', 'project']
+                    .map((e) => ChoiceChip(
+                  label: Text(e),
+                  selected: cat == e,
+                  onSelected: (_) {
+                    setState(() => cat = e);
+                  },
+                ))
+                    .toList(),
+              ),
+            ),
 
-            /// SAVE BUTTON
+            const SizedBox(height: 26),
+
             SizedBox(
               width: double.infinity,
               height: 50,
               child: ElevatedButton(
-                onPressed: _saveNote,
+                onPressed: _save,
                 style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepPurple,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
                   ),
@@ -211,58 +149,111 @@ class _AddNotePageState extends State<AddNotePage> {
     );
   }
 
-  Widget _colorDot(Color color) {
+  Widget _box(String title, Widget child) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 18),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title,
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+              )),
+          const SizedBox(height: 8),
+          child,
+        ],
+      ),
+    );
+  }
+
+  Widget _timePick(String label, TimeOfDay tm, bool isStart) {
+    return InkWell(
+      onTap: () async {
+        final t = await showTimePicker(
+          context: context,
+          initialTime: tm,
+        );
+        if (t != null) {
+          setState(() {
+            if (isStart) {
+              startTm = t;
+            } else {
+              endTm = t;
+            }
+          });
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 13),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey.shade300),
+          borderRadius: BorderRadius.circular(11),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.access_time, size: 17),
+            const SizedBox(width: 6),
+            Text('$label: ${tm.format(context)}'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _clrDot(Color c) {
+    final active = pickedClr == c;
     return GestureDetector(
-      onTap: () => setState(() => _selectedColor = color),
+      onTap: () => setState(() => pickedClr = c),
       child: Container(
         margin: const EdgeInsets.only(right: 10),
         width: 28,
         height: 28,
         decoration: BoxDecoration(
-          color: color,
+          color: c,
           shape: BoxShape.circle,
-          border: Border.all(
-            color: _selectedColor == color
-                ? Colors.black
-                : Colors.transparent,
-            width: 2,
-          ),
-        ),
-      ),
-    );
-  }
-  Widget _categoryChip(String value) {
-    final isSelected = _category == value;
-
-    return ChoiceChip(
-      label: Text(value),
-      selected: isSelected,
-      onSelected: (_) {
-        setState(() => _category = value);
-      },
-    );
-  }
-
-  Widget _timeField({
-    required String label,
-    required TimeOfDay? time,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: InputDecorator(
-        decoration: InputDecoration(
-          labelText: label,
-          border: UnderlineInputBorder(),
-        ),
-        child: Text(
-          time == null ? '--:--' : time.format(context),
+          border: active
+              ? Border.all(color: Colors.black, width: 2)
+              : null,
         ),
       ),
     );
   }
 
+  void _save() {
+    final t = titleCtrl.text.trim();
+    if (t.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Judul belum diisi')),
+      );
+      return;
+    }
 
-
-
+    Navigator.pop(
+      context,
+      Note(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        title: t,
+        description: descCtrl.text.trim().isEmpty ? null : descCtrl.text,
+        date: pickedDate,
+        startTime: startTm,
+        endTime: endTm,
+        isDone: false,
+        category: cat,
+        color: pickedClr,
+      ),
+    );
+  }
 }
