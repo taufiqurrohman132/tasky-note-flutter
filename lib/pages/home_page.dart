@@ -13,6 +13,12 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final List<Note> _notes = [];
 
+  List<Note> get _todoNotes =>
+      _notes.where((note) => !note.isDone).toList();
+
+  List<Note> get _doneNotes =>
+      _notes.where((note) => note.isDone).toList();
+
   int get todayCount {
     final now = DateTime.now();
     return _notes
@@ -25,13 +31,13 @@ class _HomePageState extends State<HomePage> {
         .length;
   }
 
-  int get scheduleCount {
-    final now = DateTime.now();
-    return _notes.where((n) => n.date.isAfter(now)).length;
+  int get endTaskCount {
+    return _notes.where((n) => n.isDone ).length;
+
   }
 
-  int get projectCount {
-    return _notes.where((n) => n.category == 'project').length;
+  int get taskActiveCount {
+    return _notes.where((n) => !n.isDone).length;
   }
 
   int get allTaskCount => _notes.length;
@@ -67,9 +73,13 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(height: 20),
                     _overview(),
                     const SizedBox(height: 24),
-                    _projectTitle(),
+                    _listTaskTitle(),
                     const SizedBox(height: 12),
                     _noteList(),
+                    const SizedBox(height: 12),
+                    _listDoneTaskTitle(),
+                    const SizedBox(height: 12),
+                    _noteDoneList(),
                   ],
                 ),
               ),
@@ -89,6 +99,8 @@ class _HomePageState extends State<HomePage> {
         },
         icon: const Icon(Icons.add),
         label: const Text('New Task'),
+        backgroundColor: Colors.blue.shade700,
+        foregroundColor: Colors.white,
       ),
     );
   }
@@ -98,8 +110,11 @@ class _HomePageState extends State<HomePage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF6A5AE0), Color(0xFF8E7BFF)],
+        gradient: LinearGradient(
+          colors: [
+            Colors.blue.shade700,
+            Colors.purple.shade900,
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -129,9 +144,12 @@ class _HomePageState extends State<HomePage> {
                 onPressed: () {},
                 icon: const Icon(Icons.notifications_none, color: Colors.white),
               ),
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 18,
-                backgroundImage: AssetImage('assets/avatar.png'),
+                backgroundImage: const AssetImage('assets/cek.png'),
+                onBackgroundImageError: (_, __) {
+                  debugPrint('Avatar asset tidak ditemukan');
+                },
               ),
             ],
           ),
@@ -160,25 +178,25 @@ class _HomePageState extends State<HomePage> {
             todayCount.toString(),
             'Today',
             Icons.today,
-            Colors.purple,
+            Colors.purple.shade900,
           ),
           _overviewCard(
-            scheduleCount.toString(),
-            'Schedule',
+            endTaskCount.toString(),
+            'End Task',
             Icons.schedule,
-            Colors.orange,
+            Colors.orange.shade700,
           ),
           _overviewCard(
-            projectCount.toString(),
-            'Projects',
+            taskActiveCount.toString(),
+            'Active Task',
             Icons.work,
-            Colors.blue,
+            Colors.blue.shade900,
           ),
           _overviewCard(
             allTaskCount.toString(),
             'All Task',
             Icons.task,
-            Colors.green,
+            Colors.lightGreen,
           ),
         ];
         return items[index];
@@ -256,21 +274,48 @@ class _HomePageState extends State<HomePage> {
   }
 
 
-  Widget _projectTitle() {
+  Widget _listTaskTitle() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: const [
         Text(
-          'Projects',
+          'List Task',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        Chip(label: Text('All time'), backgroundColor: Color(0xFFEDEAFF)),
+        Chip(
+          label: const Text(
+            'All time',
+            style: TextStyle(color: Colors.blue),
+          ),
+          backgroundColor: Colors.transparent,
+          shape: StadiumBorder(
+            side: BorderSide(
+              color: Colors.blue,
+              width: 1.2,
+            ),
+          ),
+        )
+
+      ],
+    );
+  }
+  Widget _listDoneTaskTitle() {
+    if (_doneNotes.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: const [
+        Text(
+          'List Done Task',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
       ],
     );
   }
 
   Widget _noteList() {
-    if (_notes.isEmpty) {
+    if (_todoNotes.isEmpty) {
       return const Padding(
         padding: EdgeInsets.only(top: 40),
         child: Center(child: Text('Belum Ada Catatan')),
@@ -278,31 +323,111 @@ class _HomePageState extends State<HomePage> {
     }
 
     return ListView.builder(
-      itemCount: _notes.length,
+      itemCount: _todoNotes.length,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
-        final note = _notes[index];
+        final note = _todoNotes[index];
+
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
-          child: Card(
-            elevation: 4,
-            shadowColor: Colors.black12,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
+          child: Dismissible(
+            key: ValueKey(note.id),
+
+            // swipe dari kiri ke kanan
+            direction: DismissDirection.horizontal,
+
+            background: Container(
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.only(left: 20),
+              // decoration: BoxDecoration(
+              //   color: Colors.orange,
+              //   borderRadius: BorderRadius.circular(16),
+              // ),
             ),
-            child: NoteItem(
-              noteData: note,
-              onEdti: () {},
-              onDelte: () {
-                setState(() {
-                  _notes.remove(note);
-                });
-              },
+
+            onDismissed: (_) {
+              setState(() {
+                note.isDone = true; // balik
+              });
+            },
+
+            child: Card(
+              elevation: 4,
+              child: NoteItem(
+                noteData: note,
+                onEdti: () {},
+                onDelte: () {
+                  setState(() {
+                    _notes.remove(note);
+                  });
+                },
+              ),
             ),
           ),
         );
       },
     );
   }
+  Widget _noteDoneList() {
+    if (_doneNotes.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return ListView.builder(
+      itemCount: _doneNotes.length,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemBuilder: (context, index) {
+        final note = _doneNotes[index];
+
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Dismissible(
+            key: ValueKey(note.id),
+
+            // swipe dari kiri ke kanan
+            direction: DismissDirection.horizontal,
+
+            background: Container(
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              // decoration: BoxDecoration(
+              //   color: Colors.orange,
+              //   borderRadius: BorderRadius.circular(16),
+              // ),
+              child: const Row(
+                children: [
+                  Icon(Icons.delete_outline, color: Colors.red),
+                  Spacer(),
+                  Icon(Icons.delete_outline, color: Colors.red),
+                ],
+              )
+            ),
+
+            onDismissed: (_) {
+              setState(() {
+                _notes.remove(note);
+              });
+            },
+
+            child: Card(
+              elevation: 4,
+              child: NoteItem(
+                noteData: note,
+                onEdti: () {},
+                onDelte: () {
+                  setState(() {
+                    _notes.remove(note);
+                  });
+                },
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+
 }

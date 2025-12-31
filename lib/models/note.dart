@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+// data class
 class Note {
   final String id;
   final String title;

@@ -23,127 +23,142 @@ class _AddNotePageState extends State<AddNotePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xfff6f7fb),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(18, 16, 18, 24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Create New Task',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 20),
-
-            _box(
-              'Topic',
-              TextField(
-                controller: titleCtrl,
-                decoration: const InputDecoration(
-                  hintText: 'Write topic',
-                  border: InputBorder.none,
+      appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1100),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(18, 16, 18, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Create New Task',
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
                 ),
-              ),
-            ),
+                const SizedBox(height: 20),
 
-            _box(
-              'Description',
-              TextField(
-                controller: descCtrl,
-                minLines: 2,
-                maxLines: 4,
-                decoration: const InputDecoration(
-                  hintText: 'Write description',
-                  border: InputBorder.none,
-                ),
-              ),
-            ),
-
-            _box(
-              'Date',
-              InkWell(
-                onTap: () async {
-                  final d = await showDatePicker(
-                    context: context,
-                    initialDate: pickedDate,
-                    firstDate: DateTime(2021),
-                    lastDate: DateTime(2100),
-                  );
-                  if (d != null) {
-                    setState(() => pickedDate = d);
-                  }
-                },
-                child: Row(
-                  children: [
-                    const Icon(Icons.calendar_today, size: 17),
-                    const SizedBox(width: 8),
-                    Text(
-                      '${pickedDate.day}/${pickedDate.month}/${pickedDate.year}',
+                _box(
+                  'Topic',
+                  TextField(
+                    controller: titleCtrl,
+                    decoration: const InputDecoration(
+                      hintText: 'Write topic',
+                      border: InputBorder.none,
                     ),
-                  ],
-                ),
-              ),
-            ),
-
-            _box(
-              'Time',
-              Row(
-                children: [
-                  Expanded(child: _timePick('Start', startTm, true)),
-                  const SizedBox(width: 10),
-                  Expanded(child: _timePick('End', endTm, false)),
-                ],
-              ),
-            ),
-
-            _box(
-              'Color',
-              Row(
-                children: [
-                  _clrDot(Colors.blue),
-                  _clrDot(Colors.purple),
-                  _clrDot(Colors.orange),
-                  _clrDot(Colors.green),
-                ],
-              ),
-            ),
-
-            _box(
-              'Category',
-              Wrap(
-                spacing: 8,
-                children: ['task', 'event', 'reminder', 'project']
-                    .map((e) => ChoiceChip(
-                  label: Text(e),
-                  selected: cat == e,
-                  onSelected: (_) {
-                    setState(() => cat = e);
-                  },
-                ))
-                    .toList(),
-              ),
-            ),
-
-            const SizedBox(height: 26),
-
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: _save,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
                   ),
                 ),
-                child: const Text('Save Task'),
-              ),
+
+                _box(
+                  'Description',
+                  TextField(
+                    controller: descCtrl,
+                    minLines: 2,
+                    maxLines: 4,
+                    decoration: const InputDecoration(
+                      hintText: 'Write description',
+                      border: InputBorder.none,
+                    ),
+                  ),
+                ),
+
+                _box(
+                  'Date',
+                  InkWell(
+                    onTap: () async {
+                      final d = await showDatePicker(
+                        context: context,
+                        initialDate: pickedDate,
+                        firstDate: DateTime(2021),
+                        lastDate: DateTime(2100),
+                      );
+                      if (d != null) {
+                        setState(() => pickedDate = d);
+                      }
+                    },
+                    child: Row(
+                      children: [
+                        const Icon(Icons.calendar_today, size: 17),
+                        const SizedBox(width: 8),
+                        Text(
+                          '${pickedDate.day}/${pickedDate.month}/${pickedDate.year}',
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                _box(
+                  'Time',
+                  Row(
+                    children: [
+                      Expanded(child: _timePick('Start', startTm, true)),
+                      const SizedBox(width: 10),
+                      Expanded(child: _timePick('End', endTm, false)),
+                    ],
+                  ),
+                ),
+
+                _box(
+                  'Color',
+                  Row(
+                    children: [
+                      _clrDot(Colors.blue),
+                      _clrDot(Colors.red),
+                      _clrDot(Colors.orange),
+                      _clrDot(Colors.green),
+                    ],
+                  ),
+                ),
+
+                _box(
+                  'Category',
+                  SizedBox(
+                    width: double.infinity,
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: ['task', 'event', 'reminder', 'project']
+                          .map(
+                            (e) => ChoiceChip(
+                              label: Text(e),
+                              selected: cat == e,
+                              selectedColor: Colors.blue.shade100,
+                              backgroundColor: Colors.grey.shade200,
+                              checkmarkColor: Colors.blue,
+                              labelStyle: TextStyle(
+                                color: cat == e ? Colors.blue : Colors.black,
+                              ),
+                              onSelected: (_) {
+                                setState(() => cat = e);
+                              },
+                            ),
+                          )
+                          .toList(),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 26),
+
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: _save,
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.blue.shade700,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    child: const Text('Save Task'),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -167,11 +182,7 @@ class _AddNotePageState extends State<AddNotePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title,
-              style: const TextStyle(
-                fontSize: 12,
-                color: Colors.grey,
-              )),
+          Text(title, style: const TextStyle(fontSize: 12, color: Colors.grey)),
           const SizedBox(height: 8),
           child,
         ],
@@ -182,10 +193,7 @@ class _AddNotePageState extends State<AddNotePage> {
   Widget _timePick(String label, TimeOfDay tm, bool isStart) {
     return InkWell(
       onTap: () async {
-        final t = await showTimePicker(
-          context: context,
-          initialTime: tm,
-        );
+        final t = await showTimePicker(context: context, initialTime: tm);
         if (t != null) {
           setState(() {
             if (isStart) {
@@ -224,9 +232,7 @@ class _AddNotePageState extends State<AddNotePage> {
         decoration: BoxDecoration(
           color: c,
           shape: BoxShape.circle,
-          border: active
-              ? Border.all(color: Colors.black, width: 2)
-              : null,
+          border: active ? Border.all(color: Colors.black, width: 2) : null,
         ),
       ),
     );
@@ -235,9 +241,9 @@ class _AddNotePageState extends State<AddNotePage> {
   void _save() {
     final t = titleCtrl.text.trim();
     if (t.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Judul belum diisi')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Judul belum diisi')));
       return;
     }
 

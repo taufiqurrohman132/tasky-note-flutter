@@ -17,6 +17,8 @@ class NoteItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Color mainColor = noteData.isDone ? Colors.grey : noteData.color;
+
     return InkWell(
       borderRadius: BorderRadius.circular(18),
       onTap: () {
@@ -33,7 +35,7 @@ class NoteItem extends StatelessWidget {
           borderRadius: BorderRadius.circular(18),
           border: Border(
             left: BorderSide(
-              color: noteData.color,
+              color: mainColor,
               width: 4,
             ),
           ),
@@ -55,22 +57,23 @@ class NoteItem extends StatelessWidget {
                 children: [
                   Expanded(child: _dateLable()),
                   PopupMenuButton<String>(
+                    color: Colors.white,
                     splashRadius: 18,
                     onSelected: (menuValue) {
-                      if (menuValue == 'edit') onEdti();
+                      // if (menuValue == 'edit') onEdti();
                       if (menuValue == 'delete') onDelte();
                     },
                     itemBuilder: (_) => const [
-                      PopupMenuItem(
-                        value: 'edit',
-                        child: Row(
-                          children: [
-                            Icon(Icons.edit, size: 18),
-                            SizedBox(width: 8),
-                            Text('Edit'),
-                          ],
-                        ),
-                      ),
+                      // PopupMenuItem(
+                      //   value: 'edit',
+                      //   child: Row(
+                      //     children: [
+                      //       Icon(Icons.edit, size: 18),
+                      //       SizedBox(width: 8),
+                      //       Text('Edit'),
+                      //     ],
+                      //   ),
+                      // ),
                       PopupMenuItem(
                         value: 'delete',
                         child: Row(
@@ -92,36 +95,40 @@ class NoteItem extends StatelessWidget {
 
               const SizedBox(height: 14),
 
-              /// TITLE
+              // TITEL
               Text(
                 noteData.title,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   height: 1.3,
+                  color: noteData.isDone ? Colors.grey : noteData.color, // abu-abu jika done
+                  decoration: noteData.isDone ? TextDecoration.lineThrough : TextDecoration.none,
                 ),
               ),
 
               const SizedBox(height: 14),
 
-              /// INFO ROW (RESPONSIVE)
-              Wrap(
-                spacing: 16,
-                runSpacing: 8,
+              Row(
                 children: [
-                  _informationItem(
-                    itemColor: noteData.color,
-                    itemIcon: Icons.access_time,
-                    itemLable: 'Waktu',
-                    itemValue: _timeLableText(context),
+                  Expanded(
+                    child: _informationItem(
+                      itemColor: mainColor,
+                      itemIcon: Icons.access_time,
+                      itemLable: 'Waktu',
+                      itemValue: _timeLableText(context),
+                    ),
                   ),
-                  _informationItem(
-                    itemColor: Colors.grey,
-                    itemIcon: Icons.category,
-                    itemLable: 'Kategori',
-                    itemValue: noteData.category,
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _informationItem(
+                      itemColor: Colors.grey,
+                      itemIcon: Icons.category,
+                      itemLable: 'Kategori',
+                      itemValue: noteData.category,
+                    ),
                   ),
                 ],
               ),
@@ -132,15 +139,16 @@ class NoteItem extends StatelessWidget {
     );
   }
 
-  // ================= DATE LABEL =================
   Widget _dateLable() {
+    final Color mainColor = noteData.isDone ? Colors.grey : noteData.color;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            noteData.color.withOpacity(0.15),
-            noteData.color.withOpacity(0.05),
+            mainColor.withOpacity(0.15),
+            mainColor.withOpacity(0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
@@ -151,14 +159,14 @@ class NoteItem extends StatelessWidget {
           Icon(
             Icons.calendar_today,
             size: 14,
-            color: noteData.color,
+            color: mainColor,
           ),
           const SizedBox(width: 6),
           Text(
             DateFormat('dd MMM yyyy').format(noteData.date),
             style: TextStyle(
               fontSize: 12,
-              color: noteData.color,
+              color: mainColor,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -167,7 +175,6 @@ class NoteItem extends StatelessWidget {
     );
   }
 
-  // ================= INFO ITEM =================
   Widget _informationItem({
     required Color itemColor,
     required IconData itemIcon,
