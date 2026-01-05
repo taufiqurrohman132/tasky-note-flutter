@@ -6,17 +6,24 @@ Aplikasi Mobile sederhana yang menyajikan beberapa resep masakan dalam format li
 
 ## Tampilan Aplikasi
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/1d51932b-9963-440b-9bbd-c21bf6ee93e1" width="20%" />
-  <img src="https://github.com/user-attachments/assets/71afd56c-6de0-400f-b3d6-2f9407fe1122" width="20%" />
-  <img src="https://github.com/user-attachments/assets/5cc3e5c3-b344-45f3-85ec-8d6369de5b36" width="20%" />
-  <img src="https://github.com/user-attachments/assets/3a10a78a-eaa9-498a-9919-d8d4f26af934" width="20%" />
-</p>
-
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/614361e6-5835-4314-9cec-5c39e7bf2e68" width="20%" />
-  <img src="https://github.com/user-attachments/assets/e64d62ef-1630-4562-a342-c7543c3586c1e" width="20%" />
-</p>
+<table>
+  <tr>
+    <td align="center"><strong>Home</strong></td>
+    <td align="center"><strong>Add Todo</strong></td>
+    <td align="center"><strong>Detail</strong></td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/73fa906e-24c9-45fe-9e5e-42c2c89fa0df" width="250" alt="Registration Page"/>
+    </td>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/4ec9d426-aa2b-4838-8794-949391ab3392" width="250" alt="Home Page"/>
+    </td>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/8d5473df-3207-4723-ac67-87f04b6a2fea" width="250" alt="Detail Page"/>
+    </td>
+  </tr>
+</table>
 
 ---
 
