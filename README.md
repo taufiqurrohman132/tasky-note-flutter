@@ -1,6 +1,9 @@
 # Tasky Note – Aplikasi Todolist dengan Flutter
 
-Aplikasi Mobile sederhana yang menyajikan beberapa resep masakan dalam format list interaktif. Dirancang untuk memenuhi submission akhir kelas **Memulai Pemrograman Android**, sekaligus sebagai portfolio awal untuk posisi **Android Developer (Entry-Level)**. Dibangun dengan arsitektur modern dan praktik terbaik dari industri.
+Aplikasi mobile sederhana yang menyajikan **Todo List** dalam bentuk **list interaktif**.  
+Aplikasi ini dikembangkan untuk memenuhi **submission akhir kelas Membuat Aplikasi Flutter untuk Pemula**, sekaligus sebagai **portofolio awal** untuk posisi **Mobile Developer (Entry-Level)**.  
+
+Aplikasi dibangun dengan struktur yang rapi serta menerapkan praktik dasar yang umum digunakan dalam pengembangan aplikasi mobile.
 
 ---
 
@@ -31,34 +34,35 @@ Aplikasi Mobile sederhana yang menyajikan beberapa resep masakan dalam format li
 ## Fitur Utama
 
 ### Halaman Utama
-- Menampilkan **10+ item artikel/event** dengan judul dan gambar.
-- Disusun dalam **RecyclerView** dengan desain bersih dan responsif.
+- Menampilkan **Todo List** 
+- Disusun menggunakan ListView.builder dengan tampilan bersih dan responsif.
 - Menerapkan **handler click** untuk membuka detail masing-masing item.
 
 ### Halaman Detail
 - Menampilkan informasi lengkap dari item yang dipilih:
-  - Gambar, Judul, dan Deskripsi detail.
-- Menggunakan **ScrollView** agar konten tetap terbaca saat rotasi layar.
-- Konsisten dengan data yang ditampilkan di halaman utama.
+  - Judul, Deskripsi detail, Tanggal dan waktu, dan Status
+- Menggunakan SingleChildScrollView agar konten tetap bisa di-scroll saat layar kecil atau rotasi.
+- Data ditampilkan secara konsisten dengan yang ada di halaman utama.
 
-### Halaman About
-- Menampilkan:
-  - Foto diri
-  - Nama lengkap
-  - Email akun Dicoding
-
+### Halaman Add Todo
+- Form input untuk menambahkan todo baru:
+  - TextField untuk judul dan deskripsi
+  - DatePicker & TimePicker untuk tanggal dan waktu
+- Tombol Save untuk menyimpan data todo.
+- Validasi input sederhana sebelum data disimpan.
+  
 ---
 
-## ✨ Teknologi yang di gunakan
+## ✨ Teknologi yang Digunakan
 
-| Kategori             | Teknologi / Tools            |
-|----------------------|------------------------------|
-| Bahasa Pemrograman   | Kotlin                       |
-| Tampilan List        | RecyclerView                 |
-| Navigasi             | Intent                       |
-| UI Responsif         | ConstraintLayout, ScrollView |
-| Manajemen Resource   | Drawable, String             |
-| Orientasi Support    | ScrollView Rotation-Safe     |
+| Kategori              | Teknologi / Tools                     |
+|-----------------------|----------------------------------------|
+| Bahasa Pemrograman    | Dart                                   |
+| Framework             | Flutter                                |
+| Tampilan List         | ListView.builder                       |
+| Navigasi              | Navigator (push / pop)                 |
+| UI Responsif          | Layout Widget (Column, Row, Expanded)  |
+| Scroll Konten         | SingleChildScrollView                  |
 
 ---
 
@@ -67,4 +71,4 @@ Aplikasi Mobile sederhana yang menyajikan beberapa resep masakan dalam format li
 
 1. Clone repositori:
    ```bash
-   git clone https://github.com/taufiqurrohman132/Apk-ResepMakanan.git
+   git clone https://github.com/taufiqurrohman132/tasky-note-flutter.git
