@@ -193,7 +193,11 @@ class _AddNotePageState extends State<AddNotePage> {
   Widget _timePick(String label, TimeOfDay tm, bool isStart) {
     return InkWell(
       onTap: () async {
-        final t = await showTimePicker(context: context, initialTime: tm);
+        final t = await showTimePicker(
+          context: context,
+          initialTime: tm,
+          initialEntryMode: TimePickerEntryMode.dial,
+        );
         if (t != null) {
           setState(() {
             if (isStart) {
